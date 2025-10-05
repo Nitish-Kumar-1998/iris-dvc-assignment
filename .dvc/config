@@ -1,4 +1,6 @@
 [core]
-    remote = gcs-remote
+    remote = gcd-remote
 ['remote "gcs-remote"']
+    url = gs://week2_dvc_iris_bucket
+['remote "gcd-remote"']
     url = gs://week2_dvc_iris_bucket
