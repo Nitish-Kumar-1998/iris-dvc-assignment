@@ -1,4 +1,5 @@
-dvc[gcs]==3.50.1
+dvc==3.50.1
+gcsfs
 pytest
 joblib
 scikit-learn
