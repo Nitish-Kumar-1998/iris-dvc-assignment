@@ -65,7 +65,7 @@ jobs:
       - name: Run tests and generate report
         run: |
           echo "🧪 Running tests..."
-          pytest --md-report --md-report-output=report.md
+          pytest --md report.md
       - name: Create CML report
         if: github.event_name == 'pull_request'
         env:
