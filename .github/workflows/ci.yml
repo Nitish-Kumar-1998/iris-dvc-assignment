@@ -22,7 +22,8 @@ jobs:
         with:
           node-version: '20'
       - name: Install CML
-        run: npm install -g cml
+        if: github.event_name == 'pull_request'
+        run: npm install -g @dvcorg/cml
       - name: Install Python dependencies and Google Cloud CLI
         run: |
           python -m pip install --upgrade pip setuptools wheel
@@ -70,4 +71,6 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: cml comment create report.md
+        run: |
+          cat report.md >> $GITHUB_STEP_SUMMARY
+          cml comment create report.md
