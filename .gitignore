@@ -17,3 +17,5 @@ __pycache__/
 
 # Generated Outputs
 /metrics.json
+key.json
+report.md
