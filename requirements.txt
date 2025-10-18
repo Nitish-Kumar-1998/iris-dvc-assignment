@@ -4,5 +4,5 @@ joblib
 scikit-learn
 pandas
 
-cml
+dvc-cml
 pytest-md
