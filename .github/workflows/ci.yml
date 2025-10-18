@@ -21,15 +21,14 @@ jobs:
         with:
           python-version: '3.11'
 
-      # New step to install Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # New step to install CML tool using npm
       - name: Install CML
-        run: npm install -g @dvcai/cml
+        # Corrected package name from '@dvcai/cml' to 'cml'
+        run: npm install -g cml
 
       - name: Install Python dependencies
         run: |
