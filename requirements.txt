@@ -1,5 +1,6 @@
-pandas
-scikit-learn
-joblib
+dvc[gs]==3.50.1
 pytest
-dvc[gcs]
+joblib
+scikit-learn
+pandas
+pytest-md

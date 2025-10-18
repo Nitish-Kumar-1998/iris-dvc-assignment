@@ -1,3 +1,21 @@
+# DVC Tracked Files
 /data
 /model.pkl
+
+# Python Virtual Environment
 .venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# DVC Cache (Very Important!)
+.dvc/cache
+
+# Pytest Cache
+.pytest_cache/
+
+# Generated Outputs
+/metrics.json
+key.json
+report.md

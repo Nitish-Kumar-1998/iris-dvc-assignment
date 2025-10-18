@@ -1,1 +1,76 @@
- 
+name: Model CI
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install CML
+        if: github.event_name == 'pull_request'
+        run: npm install -g @dvcorg/cml
+      - name: Install Python dependencies and Google Cloud CLI
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-cli || sudo apt-get install -y google-cloud-sdk || echo "⚠️ Google Cloud CLI already available"
+      - name: Authenticate DVC with GCS
+        shell: bash
+        run: |
+          echo '${{ secrets.GCP_KEY }}' > key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/key.json
+          echo "✅ GCP credentials written to key.json"
+          echo "🔹 Validating JSON format..."
+          python3 -m json.tool key.json > /dev/null && echo "✅ JSON is valid" || (echo "❌ JSON is invalid!" && cat key.json && exit 1)
+          dvc remote modify gcd-remote credentialpath key.json || echo "remote already configured"
+          dvc remote modify gcd-remote endpointurl https://storage.googleapis.com || echo "endpoint already set"
+      - name: 🔍 Debug Authentication
+        run: |
+          echo "🔹 Checking authentication environment..."
+          echo "GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS"
+          echo "🔹 Listing credentials file:"
+          ls -l key.json || echo "❌ Credentials file not found!"
+          echo "🔹 Showing first few lines of credentials file (redacted):"
+          head -n 3 key.json || echo "❌ No content!"
+          echo "🔹 DVC remote list:"
+          dvc remote list
+      - name: 🧠 Verify GCS Access
+        run: |
+          echo "🔹 Verifying Google Cloud Storage access..."
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/key.json
+          gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+          echo "✅ Authenticated service account:"
+          gcloud auth list
+          echo "🔹 Attempting to list GCS bucket..."
+          gsutil ls gs://week2_dvc_iris_bucket || (echo "❌ Unable to access GCS bucket" && exit 1)
+      - name: Pull DVC data
+        run: |
+          echo "🚀 Pulling data from DVC remote..."
+          dvc pull
+      - name: Run tests and generate report
+        run: |
+          echo "🧪 Running tests..."
+          pytest --md report.md
+      - name: Create CML report
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat report.md >> $GITHUB_STEP_SUMMARY
+          cml comment create report.md
