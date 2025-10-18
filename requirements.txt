@@ -1,5 +1,8 @@
-pandas
-scikit-learn
-joblib
-pytest
 dvc[gcs]
+pytest
+joblib
+scikit-learn
+pandas
+
+cml
+pytest-md

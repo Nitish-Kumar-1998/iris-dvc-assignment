@@ -1,33 +1,62 @@
-name: CI
+name: Model CI
 
+# This section defines WHEN the workflow runs
 on:
+  # Run on pushes to the main and dev branches
   push:
     branches:
-      - dev
       - main
+      - dev
+  # Run on pull requests targeting the main branch
   pull_request:
     branches:
       - main
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # Step 1: Check out the repository code
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
+      # Step 2: Set up Python environment
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: '3.12'
 
+      # Step 3: Install all project dependencies
       - name: Install dependencies
-        run: pip install dvc[gcs] pytest joblib scikit-learn pandas
+        run: |
+          pip install -r requirements.txt
 
+      # Step 4: Authenticate with Google Cloud for DVC
+      - name: Authenticate DVC
+        env:
+          # This uses your secret named GCP_KEY from GitHub settings
+          GCP_KEY: ${{ secrets.GCP_KEY }}
+        run: |
+          echo "$GCP_KEY" > gcp_creds.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp_creds.json
+
+      # Step 5: Pull data and model from DVC remote
       - name: Pull DVC data
-        run: dvc pull
+        run: |
+          dvc pull
 
-      - name: Run tests
-        run: pytest -v
- 
+      # Step 6: Run tests and generate a markdown report
+      - name: Run tests and generate report
+        run: |
+          pytest --md-report -o report.md
+
+      # Step 7: Create a CML report as a PR comment
+      - name: Create CML report
+        # This step only runs for pull requests, not for pushes
+        if: github.event_name == 'pull_request'
+        env:
+          # This token is automatically provided by GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # This command posts the report.md file as a comment
+          cml comment create report.md
