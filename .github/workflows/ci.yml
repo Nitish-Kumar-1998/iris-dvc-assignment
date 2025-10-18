@@ -32,9 +32,11 @@ jobs:
       - name: Authenticate DVC with GCS
         shell: bash
         run: |
-          echo "${{ secrets.GCP_KEY }}" > key.json
+          echo '${{ secrets.GCP_KEY }}' > key.json
           export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/key.json
           echo "✅ GCP credentials written to key.json"
+          echo "🔹 Validating JSON format..."
+          python3 -m json.tool key.json > /dev/null && echo "✅ JSON is valid" || (echo "❌ JSON is invalid!" && cat key.json && exit 1)
           dvc remote modify gcd-remote credentialpath key.json || echo "remote already configured"
           dvc remote modify gcd-remote endpointurl https://storage.googleapis.com || echo "endpoint already set"
       - name: 🔍 Debug Authentication
