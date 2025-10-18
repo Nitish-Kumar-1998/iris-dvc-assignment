@@ -27,7 +27,6 @@ jobs:
           node-version: '20'
 
       - name: Install CML
-        # Corrected package name from '@dvcai/cml' to 'cml'
         run: npm install -g cml
 
       - name: Install Python dependencies
