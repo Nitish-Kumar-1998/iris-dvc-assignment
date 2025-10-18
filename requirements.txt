@@ -4,3 +4,4 @@ joblib
 scikit-learn
 pandas
 pytest-md
+dvc-gcs
