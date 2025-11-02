@@ -1,0 +1,68 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+env:
+  PROJECT_ID: annular-arena-473717-p5
+  GKE_CLUSTER: iris-cluster
+  GKE_ZONE: us-central1-a
+  DEPLOYMENT_NAME: iris-api
+  IMAGE_NAME: iris-fastapi
+  REGISTRY_HOSTNAME: us-central1-docker.pkg.dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest \
+          .
+
+    - name: Push image to Google Artifact Registry
+      run: |
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} --zone ${{ env.GKE_ZONE }}
+
+    - name: Deploy to GKE
+      run: |
+        kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
+          ${{ env.DEPLOYMENT_NAME }}=${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --record || \
+        kubectl create deployment ${{ env.DEPLOYMENT_NAME }} \
+          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        
+        kubectl expose deployment ${{ env.DEPLOYMENT_NAME }} \
+          --type=LoadBalancer \
+          --port=80 \
+          --target-port=8081 || true
+
+    - name: Get service endpoint
+      run: |
+        sleep 10
+        kubectl get service ${{ env.DEPLOYMENT_NAME }}
