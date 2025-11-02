@@ -1,0 +1,11 @@
+                                                               params  mean_test_score  std_test_score  rank_test_score
+14     {'C': 1.0, 'max_iter': 200, 'penalty': 'l2', 'solver': 'saga'}         0.975000        0.020412                1
+29   {'C': 100.0, 'max_iter': 500, 'penalty': 'l2', 'solver': 'saga'}         0.975000        0.020412                1
+23    {'C': 10.0, 'max_iter': 500, 'penalty': 'l2', 'solver': 'saga'}         0.975000        0.020412                1
+17     {'C': 1.0, 'max_iter': 500, 'penalty': 'l2', 'solver': 'saga'}         0.975000        0.020412                1
+19   {'C': 10.0, 'max_iter': 200, 'penalty': 'l2', 'solver': 'lbfgs'}         0.966667        0.031180                5
+13    {'C': 1.0, 'max_iter': 200, 'penalty': 'l2', 'solver': 'lbfgs'}         0.966667        0.016667                5
+20    {'C': 10.0, 'max_iter': 200, 'penalty': 'l2', 'solver': 'saga'}         0.966667        0.031180                5
+22   {'C': 10.0, 'max_iter': 500, 'penalty': 'l2', 'solver': 'lbfgs'}         0.966667        0.031180                5
+16    {'C': 1.0, 'max_iter': 500, 'penalty': 'l2', 'solver': 'lbfgs'}         0.966667        0.016667                5
+25  {'C': 100.0, 'max_iter': 200, 'penalty': 'l2', 'solver': 'lbfgs'}         0.966667        0.031180                5

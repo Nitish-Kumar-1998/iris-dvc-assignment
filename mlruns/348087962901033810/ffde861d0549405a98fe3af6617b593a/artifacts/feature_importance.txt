@@ -1,0 +1,5 @@
+          feature  importance
+petal length (cm)    1.489851
+ petal width (cm)    1.240988
+ sepal width (cm)    1.008609
+sepal length (cm)    0.626387

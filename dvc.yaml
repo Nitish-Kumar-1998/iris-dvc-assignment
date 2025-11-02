@@ -1,0 +1,21 @@
+stages:
+  train:
+    cmd: python train.py
+    deps:
+      - train.py
+      - data/iris.csv
+    metrics:
+      - metrics.json:
+          cache: false
+    plots:
+      - confusion_matrix.txt:
+          x: actual
+          y: predicted
+
+  evaluate:
+    cmd: python eval.py
+    deps:
+      - eval.py
+    metrics:
+      - eval_metrics.json:
+          cache: false

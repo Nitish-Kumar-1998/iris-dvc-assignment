@@ -1,0 +1,15 @@
+creation_timestamp: 1761816055168
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1761816055168
+model_id: m-ff18d13abef54324beb748c93f3bac3d
+name: iris-classifier
+run_id: 1ab8a6b5a177415da08c073903971ad9
+run_link: null
+source: models:/m-ff18d13abef54324beb748c93f3bac3d
+status: READY
+status_message: null
+storage_location: /home/nitishmlops/iris-dvc-pipeline/mlruns/348087962901033810/models/m-ff18d13abef54324beb748c93f3bac3d/artifacts
+user_id: null
+version: 2

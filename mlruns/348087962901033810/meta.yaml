@@ -1,0 +1,6 @@
+artifact_location: /home/nitishmlops/iris-dvc-pipeline/mlruns/348087962901033810
+creation_time: 1761811930931
+experiment_id: '348087962901033810'
+last_update_time: 1761811930931
+lifecycle_stage: active
+name: iris-pipeline-experiment

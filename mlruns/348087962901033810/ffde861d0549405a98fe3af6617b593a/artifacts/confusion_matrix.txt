@@ -1,0 +1,4 @@
+                 Pred_setosa  Pred_versicolor  Pred_virginica
+True_setosa               10                0               0
+True_versicolor            0               10               0
+True_virginica             0                0              10

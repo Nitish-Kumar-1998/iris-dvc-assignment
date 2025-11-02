@@ -4,3 +4,5 @@ joblib
 scikit-learn
 pandas
 pytest-md
+mlflow
+google-cloud-storage

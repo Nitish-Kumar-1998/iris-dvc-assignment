@@ -1,0 +1,14 @@
+artifact_uri: /home/nitishmlops/iris-dvc-pipeline/mlruns/348087962901033810/ffde861d0549405a98fe3af6617b593a/artifacts
+end_time: 1761811941006
+entry_point_name: ''
+experiment_id: '348087962901033810'
+lifecycle_stage: active
+run_id: ffde861d0549405a98fe3af6617b593a
+run_name: Iris-Training-20251030-080346
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1761811930933
+status: 3
+tags: []
+user_id: nitishmlops

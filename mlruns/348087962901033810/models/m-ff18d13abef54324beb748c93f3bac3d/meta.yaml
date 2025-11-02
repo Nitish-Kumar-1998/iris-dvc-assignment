@@ -1,0 +1,10 @@
+artifact_location: /home/nitishmlops/iris-dvc-pipeline/mlruns/348087962901033810/models/m-ff18d13abef54324beb748c93f3bac3d/artifacts
+creation_timestamp: 1761816054427
+experiment_id: '348087962901033810'
+last_updated_timestamp: 1761816055143
+model_id: m-ff18d13abef54324beb748c93f3bac3d
+model_type: null
+name: model
+source_run_id: 1ab8a6b5a177415da08c073903971ad9
+status: 2
+status_message: null
