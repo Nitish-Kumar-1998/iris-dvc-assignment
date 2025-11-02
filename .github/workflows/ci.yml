@@ -58,7 +58,7 @@ jobs:
           echo "✅ Authenticated service account:"
           gcloud auth list
           echo "🔹 Attempting to list GCS bucket..."
-          gsutil ls gs://week2_dvc_iris_bucket || (echo "❌ Unable to access GCS bucket" && exit 1)
+          gsutil ls gs://mlflow-artifacts-nitish || (echo "❌ Unable to access GCS bucket" && exit 1)
       - name: Pull DVC data
         run: |
           echo "🚀 Pulling data from DVC remote..."
