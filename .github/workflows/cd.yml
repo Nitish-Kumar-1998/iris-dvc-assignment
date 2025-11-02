@@ -9,10 +9,11 @@ on:
 env:
   PROJECT_ID: annular-arena-473717-p5
   GKE_CLUSTER: iris-cluster
-  GKE_ZONE: us-central1-a
+  GKE_ZONE: us-central1-c
   DEPLOYMENT_NAME: iris-api
   IMAGE_NAME: iris-fastapi
   REGISTRY_HOSTNAME: us-central1-docker.pkg.dev
+  REPOSITORY: iris-fastapi
 
 jobs:
   build-and-deploy:
@@ -36,14 +37,14 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest \
+        docker build -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest \
           .
 
     - name: Push image to Google Artifact Registry
       run: |
-        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
 
     - name: Get GKE credentials
       run: |
@@ -52,10 +53,10 @@ jobs:
     - name: Deploy to GKE
       run: |
         kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
-          ${{ env.DEPLOYMENT_NAME }}=${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          ${{ env.DEPLOYMENT_NAME }}=${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
           --record || \
         kubectl create deployment ${{ env.DEPLOYMENT_NAME }} \
-          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         
         kubectl expose deployment ${{ env.DEPLOYMENT_NAME }} \
           --type=LoadBalancer \
