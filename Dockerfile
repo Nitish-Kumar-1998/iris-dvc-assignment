@@ -1,22 +1,14 @@
-# ===============================
-# Dockerfile for Iris FastAPI API
-# ===============================
+FROM python:3.10-slim
 
-# Step 1: Use a lightweight Python base image
-FROM python:3.12-slim
-
-# Step 2: Set working directory
 WORKDIR /app
 
-# Step 3: Copy all project files
 COPY . /app
 
-# Step 4: Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install fastapi uvicorn mlflow
 
-# Step 5: Expose port 8080
-EXPOSE 8080
+EXPOSE 8081
 
-# Step 6: Run FastAPI app
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8081/health')" || exit 1
+
+CMD ["python", "app.py"]
