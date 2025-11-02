@@ -33,8 +33,7 @@ jobs:
 
     - name: Install GKE auth plugin
       run: |
-        sudo apt-get update
-        sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+        gcloud components install gke-gcloud-auth-plugin
 
     - name: Configure Docker for Artifact Registry
       run: |
