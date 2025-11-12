@@ -1,47 +1,42 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from flask import Flask, request, jsonify
 import mlflow.sklearn
-import pandas as pd
-import uvicorn
+import os
 
-# ✅ Load model from GCS
-MODEL_URI = "gs://mlflow-artifacts-nitish/4/models/m-91ab307d3c2f4477a14fdcee6f3b0bc0/artifacts"
-print("🔹 Loading model from Google Cloud Storage...")
-model = mlflow.sklearn.load_model(MODEL_URI)
-print("✅ Model loaded successfully!")
+app = Flask(__name__)
 
-app = FastAPI(title="IRIS Model API", version="1.0.0")
+# MODEL_URI = "gs://mlflow-artifacts-nitish/4/models/m-91ab307d3c2f4477a14fdcee6f3b0bc0/artifacts"
+# If bucket not used, load local model
+MODEL_URI = "models/latest_model"  # fallback if no GCS access
 
-# Define the request schema
-class IrisData(BaseModel):
-    sepal_length_cm: float
-    sepal_width_cm: float
-    petal_length_cm: float
-    petal_width_cm: float
+print("🔹 Loading model...")
+try:
+    model = mlflow.sklearn.load_model(MODEL_URI)
+    print("✅ Model loaded successfully.")
+except Exception as e:
+    print("⚠️ Model not found, running without model:", e)
+    model = None
 
-@app.get("/")
+@app.route('/')
 def home():
-    return {"message": "IRIS Model API is running!"}
+    return jsonify({"message": "Iris Prediction API is live!"})
 
-@app.get("/health")
-def health():
-    return {"status": "healthy"}
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json(force=True)
+    if not model:
+        return jsonify({"error": "Model not loaded"}), 500
 
-@app.post("/predict")
-def predict(data: IrisData):
-    """
-    Predict iris class from measurements
-    Returns: 0 (Setosa), 1 (Versicolor), 2 (Virginica)
-    """
-    sample = pd.DataFrame([{
-        "sepal length (cm)": data.sepal_length_cm,
-        "sepal width (cm)": data.sepal_width_cm,
-        "petal length (cm)": data.petal_length_cm,
-        "petal width (cm)": data.petal_width_cm
-    }])
-    
-    prediction = model.predict(sample)
-    return {"prediction": int(prediction[0])}
+    features = [[
+        data["sepal_length"],
+        data["sepal_width"],
+        data["petal_length"],
+        data["petal_width"]
+    ]]
+    prediction = model.predict(features)[0]
+    return jsonify({
+        "input": data,
+        "prediction": prediction
+    })
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8081)
+    app.run(host="0.0.0.0", port=8080)

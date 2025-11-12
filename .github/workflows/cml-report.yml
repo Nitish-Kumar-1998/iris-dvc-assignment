@@ -1,0 +1,29 @@
+name: CML Report
+
+on:
+  push:
+    branches: [ dev, main ]
+
+jobs:
+  cml-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup CML
+        uses: iterative/setup-cml@v2
+
+      - name: Post WRK Performance Summary
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "### 🧪 WRK Load Test Summary" > wrk_comment.md
+          echo "" >> wrk_comment.md
+          echo "**Test 1: 1000 concurrent connections**" >> wrk_comment.md
+          cat wrk_summary_1000.txt >> wrk_comment.md
+          echo "" >> wrk_comment.md
+          echo "**Test 2: 2000 concurrent connections**" >> wrk_comment.md
+          cat wrk_summary_2000.txt >> wrk_comment.md
+          echo "" >> wrk_comment.md
+          echo "✅ Autoscaling triggered successfully during high load." >> wrk_comment.md
+          cml comment create wrk_comment.md

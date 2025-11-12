@@ -1,0 +1,11 @@
+### 🧪 WRK Load Test Summary
+
+**Test 1: 1000 concurrent connections**
+    Latency     1.01s   316.85ms   2.00s    71.43%
+Requests/sec:    446.72
+Transfer/sec:    159.71KB
+
+**Test 2: 2000 concurrent connections**
+    Latency     1.05s   349.98ms   1.99s    70.47%
+Requests/sec:    460.91
+Transfer/sec:    164.75KB
