@@ -1,14 +1,17 @@
-FROM python:3.10-slim
+# Use a lightweight Python image
+FROM python:3.12-slim
 
+# Set working directory
 WORKDIR /app
 
+# Copy project files
 COPY . /app
 
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8081
+# Expose the port Flask runs on
+EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8081/health')" || exit 1
-
+# Start the Flask app
 CMD ["python", "app.py"]
