@@ -1,0 +1,10 @@
+Running 30s test @ http://35.200.152.65/predict
+  4 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.01s   316.85ms   2.00s    71.43%
+    Req/Sec   112.62     43.47   303.00     71.64%
+  13424 requests in 30.05s, 4.69MB read
+  Socket errors: connect 0, read 0, write 0, timeout 511
+  Non-2xx or 3xx responses: 13424
+Requests/sec:    446.72
+Transfer/sec:    159.71KB
